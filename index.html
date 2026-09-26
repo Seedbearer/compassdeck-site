@@ -3,6 +3,11 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>CompassDeck</title>
+<link rel="icon" type="image/png" sizes="32x32" href="/favicon-32.png">
+<link rel="icon" type="image/png" sizes="192x192" href="/favicon-192.png">
+<link rel="apple-touch-icon" href="/apple-touch-icon.png">
+<meta property="og:title" content="CompassDeck">
+<meta property="og:image" content="https://compassdeckcrm.com/icon-512.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;0,6..72,600;1,6..72,500&family=Work+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@500&display=swap" rel="stylesheet">
@@ -84,11 +89,7 @@
   }
   header .wrap{display:flex; align-items:center; justify-content:space-between; gap:16px;}
   .brand{display:flex; align-items:center; gap:10px; font-family:"Newsreader", serif; font-size:20px; font-weight:600;}
-  .brand-mark{
-    width:26px;height:26px;border-radius:7px;
-    background:linear-gradient(155deg, var(--accent), var(--accent2));
-    flex:none;
-  }
+  .brand-mark{width:32px;height:32px;display:block;flex:none;}
 
   .hero{padding-block:64px 56px;}
   .hero-grid{display:grid; grid-template-columns:1.05fr 1fr; gap:56px; align-items:center;}
@@ -175,7 +176,7 @@
 
 <header>
   <div class="wrap">
-    <div class="brand"><span class="brand-mark"></span>CompassDeck</div>
+    <div class="brand"><img class="brand-mark" src="/logo-64.png" alt="" width="32" height="32">CompassDeck</div>
     <a class="btn btn-ghost" href="#access">Get early access</a>
   </div>
 </header>
