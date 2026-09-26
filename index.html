@@ -1,0 +1,398 @@
+<!doctype html>
+<html lang="en">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>CompassDeck</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;0,6..72,600;1,6..72,500&family=Work+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@500&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --ink:#1E1B26;
+    --paper:#FBF8F3;
+    --card:#FFFFFF;
+    --accent:#D85A1F;
+    --accent-ink:#FFFFFF;
+    --accent2:#2B5D52;
+    --muted:#6E6659;
+    --line:#E6E0D4;
+    --shadow: 0 1px 2px rgba(30,27,38,.04), 0 8px 24px -12px rgba(30,27,38,.18);
+    color-scheme: light;
+  }
+  @media (prefers-color-scheme: dark){
+    :root:not([data-theme="light"]){
+      --ink:#F1ECE1;
+      --paper:#161320;
+      --card:#1E1B29;
+      --accent:#FF8A4C;
+      --accent-ink:#1E1B26;
+      --accent2:#6BB3A0;
+      --muted:#A79E8E;
+      --line:#312C3D;
+      --shadow: 0 1px 2px rgba(0,0,0,.3), 0 8px 24px -12px rgba(0,0,0,.5);
+      color-scheme: dark;
+    }
+  }
+  :root[data-theme="dark"]{
+    --ink:#F1ECE1;
+    --paper:#161320;
+    --card:#1E1B29;
+    --accent:#FF8A4C;
+    --accent-ink:#1E1B26;
+    --accent2:#6BB3A0;
+    --muted:#A79E8E;
+    --line:#312C3D;
+    --shadow: 0 1px 2px rgba(0,0,0,.3), 0 8px 24px -12px rgba(0,0,0,.5);
+    color-scheme: dark;
+  }
+
+  *{box-sizing:border-box;}
+  body{
+    margin:0;
+    background:var(--paper);
+    color:var(--ink);
+    font-family:"Work Sans", ui-sans-serif, system-ui, sans-serif;
+    line-height:1.55;
+    -webkit-font-smoothing:antialiased;
+  }
+  .wrap{max-width:1080px;margin-inline:auto;padding-inline:24px;}
+  h1,h2,h3{font-family:"Newsreader", Georgia, serif; font-weight:500; text-wrap:balance; margin:0;}
+  .eyebrow{
+    font-family:"JetBrains Mono", ui-monospace, monospace;
+    font-size:12px;
+    letter-spacing:.08em;
+    text-transform:uppercase;
+    color:var(--accent2);
+    display:flex; align-items:center; gap:8px;
+  }
+  .eyebrow::before{content:"";width:16px;height:1px;background:var(--accent2);display:inline-block;}
+  a{color:inherit;}
+  .muted{color:var(--muted);}
+  .btn{
+    display:inline-flex; align-items:center; justify-content:center; gap:8px;
+    font-family:"Work Sans", sans-serif; font-weight:600; font-size:15px;
+    padding:13px 22px; border-radius:8px; border:1px solid transparent;
+    cursor:pointer; text-decoration:none; white-space:nowrap;
+  }
+  .btn-primary{background:var(--accent); color:var(--accent-ink);}
+  .btn-ghost{background:transparent; color:var(--ink); border-color:var(--line);}
+  .btn:focus-visible{outline:2px solid var(--accent2); outline-offset:2px;}
+
+  header{
+    padding-block:20px;
+    border-bottom:1px solid var(--line);
+  }
+  header .wrap{display:flex; align-items:center; justify-content:space-between; gap:16px;}
+  .brand{display:flex; align-items:center; gap:10px; font-family:"Newsreader", serif; font-size:20px; font-weight:600;}
+  .brand-mark{
+    width:26px;height:26px;border-radius:7px;
+    background:linear-gradient(155deg, var(--accent), var(--accent2));
+    flex:none;
+  }
+
+  .hero{padding-block:64px 56px;}
+  .hero-grid{display:grid; grid-template-columns:1.05fr 1fr; gap:56px; align-items:center;}
+  @media (max-width:820px){ .hero-grid{grid-template-columns:1fr;} }
+  .hero h1{font-size:clamp(32px,4.6vw,50px); line-height:1.08; margin-block:16px 18px;}
+  .hero p.lede{font-size:18px; color:var(--muted); max-width:46ch; margin-bottom:28px;}
+  .hero-ctas{display:flex; gap:12px; flex-wrap:wrap; align-items:center;}
+  .hero-note{margin-top:14px; font-size:13px; color:var(--muted);}
+
+  /* Mock split dashboard/portal card */
+  .mock{
+    background:var(--card); border:1px solid var(--line); border-radius:16px;
+    box-shadow:var(--shadow); overflow:hidden;
+  }
+  .mock-bar{display:flex; gap:6px; padding:12px 16px; border-bottom:1px solid var(--line);}
+  .mock-dot{width:8px;height:8px;border-radius:50%; background:var(--line);}
+  .mock-split{display:grid; grid-template-columns:1fr 1fr;}
+  .mock-pane{padding:16px; font-size:12px;}
+  .mock-pane + .mock-pane{border-left:1px solid var(--line);}
+  .mock-label{font-family:"JetBrains Mono", monospace; font-size:10px; letter-spacing:.06em; text-transform:uppercase; color:var(--muted); margin-bottom:10px;}
+  .mock-row{display:flex; justify-content:space-between; gap:8px; padding:7px 0; border-bottom:1px dashed var(--line); font-size:12.5px;}
+  .mock-row:last-child{border-bottom:none;}
+  .mock-pill{font-size:10px; padding:2px 7px; border-radius:99px; background:color-mix(in srgb, var(--accent2) 18%, transparent); color:var(--accent2); font-family:"JetBrains Mono", monospace;}
+  .mock-check{width:13px;height:13px;border-radius:4px;border:1.5px solid var(--line); flex:none;}
+  .mock-check.done{background:var(--accent2); border-color:var(--accent2); position:relative;}
+
+  section{padding-block:60px;}
+  .section-head{max-width:60ch; margin-bottom:36px;}
+  .section-head h2{font-size:clamp(24px,3vw,32px); margin-top:10px;}
+
+  .problem-line{font-size:19px; max-width:56ch; color:var(--ink);}
+  .problem-line strong{color:var(--accent);}
+
+  .features{display:grid; grid-template-columns:repeat(3,1fr); gap:1px; background:var(--line); border:1px solid var(--line); border-radius:14px; overflow:hidden;}
+  @media (max-width:760px){ .features{grid-template-columns:1fr;} }
+  .feature{background:var(--card); padding:26px;}
+  .feature h3{font-size:17px; margin-bottom:8px;}
+  .feature p{font-size:14.5px; color:var(--muted); margin:0;}
+  .feature .tag{font-family:"JetBrains Mono",monospace; font-size:11px; color:var(--accent2); text-transform:uppercase; letter-spacing:.05em; margin-bottom:10px; display:block;}
+
+  .steps{display:grid; gap:22px;}
+  .step{display:grid; grid-template-columns:56px 1fr; gap:20px; align-items:start;}
+  .step-num{font-family:"Newsreader", serif; font-size:32px; color:var(--accent); line-height:1;}
+  .step h3{font-size:18px; margin-bottom:6px;}
+  .step p{margin:0; color:var(--muted); font-size:15px; max-width:56ch;}
+
+  .pricing-card{
+    background:var(--card); border:1px solid var(--line); border-radius:16px; box-shadow:var(--shadow);
+    padding:36px; display:grid; grid-template-columns:1.3fr 1fr; gap:32px; align-items:center;
+  }
+  @media (max-width:760px){ .pricing-card{grid-template-columns:1fr;} }
+  .price-tag{display:flex; align-items:baseline; gap:10px; margin-bottom:6px;}
+  .price-tag .amount{font-family:"Newsreader", serif; font-size:44px;}
+  .price-tag .was{font-size:16px; color:var(--muted); text-decoration:line-through;}
+  .price-list{list-style:none; margin:18px 0 0; padding:0; display:grid; gap:9px; font-size:14.5px;}
+  .price-list li{display:flex; gap:9px; align-items:flex-start;}
+  .price-list li::before{content:"—"; color:var(--accent2); flex:none;}
+
+  details{border-top:1px solid var(--line); padding-block:16px;}
+  details:last-child{border-bottom:1px solid var(--line);}
+  summary{cursor:pointer; font-weight:600; font-size:15.5px; list-style:none; display:flex; justify-content:space-between; gap:12px;}
+  summary::-webkit-details-marker{display:none;}
+  summary::after{content:"+"; font-family:"JetBrains Mono",monospace; color:var(--accent);}
+  details[open] summary::after{content:"–";}
+  details p{margin:12px 0 0; color:var(--muted); font-size:14.5px; max-width:60ch;}
+
+  .waitlist{
+    background:var(--card); border:1px solid var(--line); border-radius:16px; box-shadow:var(--shadow);
+    padding:40px; display:grid; gap:22px; grid-template-columns:1fr auto; align-items:center;
+  }
+  @media (max-width:760px){ .waitlist{grid-template-columns:1fr;} }
+  .waitlist h2{font-size:26px; margin-bottom:8px;}
+  .email-row{display:flex; gap:8px; flex-wrap:wrap; align-items:center;}
+  .email-box{
+    font-family:"JetBrains Mono", monospace; font-size:14px; background:var(--paper);
+    border:1px solid var(--line); border-radius:8px; padding:10px 14px; user-select:all;
+  }
+  .copy-btn{background:transparent; border:1px solid var(--line); color:var(--ink); border-radius:8px; padding:10px 14px; font-family:"Work Sans",sans-serif; font-size:13px; font-weight:600; cursor:pointer;}
+  .copy-btn[data-copied="true"]{border-color:var(--accent2); color:var(--accent2);}
+
+  footer{padding-block:32px; border-top:1px solid var(--line);}
+  footer .wrap{display:flex; justify-content:space-between; gap:16px; flex-wrap:wrap; font-size:13px; color:var(--muted);}
+</style>
+
+<header>
+  <div class="wrap">
+    <div class="brand"><span class="brand-mark"></span>CompassDeck</div>
+    <a class="btn btn-ghost" href="#access">Get early access</a>
+  </div>
+</header>
+
+<main>
+  <section class="hero">
+    <div class="wrap hero-grid">
+      <div>
+        <div class="eyebrow">For 1:1 career coaches</div>
+        <h1>Your clients get a portal.<br>You get your time back.</h1>
+        <p class="lede">CompassDeck is a Notion system built specifically for career coaching — client CRM, session notes, homework, and a values / leadership strengths / skills assessment your clients can actually see progress on, without you building any of it from scratch.</p>
+        <div class="hero-ctas">
+          <a class="btn btn-primary" href="#access">Get early access — $89 founding price</a>
+          <a class="btn btn-ghost" href="#inside">See what's inside ↓</a>
+        </div>
+        <p class="hero-note">One-time purchase. Works in the free version of Notion. No subscription.</p>
+      </div>
+      <div class="mock" aria-hidden="true">
+        <div class="mock-bar"><span class="mock-dot"></span><span class="mock-dot"></span><span class="mock-dot"></span></div>
+        <div class="mock-split">
+          <div class="mock-pane">
+            <div class="mock-label">Coach dashboard</div>
+            <div class="mock-row"><span>Priya M.</span><span class="mock-pill">Active</span></div>
+            <div class="mock-row"><span>Next session</span><span>Thu 10:00</span></div>
+            <div class="mock-row"><span>Values mapped</span><span>5 / 5</span></div>
+            <div class="mock-row"><span>Skills tracked</span><span>7 / 7</span></div>
+            <div class="mock-row"><span>Payment</span><span class="mock-pill">Paid</span></div>
+          </div>
+          <div class="mock-pane">
+            <div class="mock-label">Priya's portal</div>
+            <div class="mock-row"><span class="mock-check done"></span><span>Update resume summary</span></div>
+            <div class="mock-row"><span class="mock-check done"></span><span>Draft 3 target companies</span></div>
+            <div class="mock-row"><span class="mock-check"></span><span>Practice interview story</span></div>
+            <div class="mock-row"><span>Next session</span><span>Thu 10:00</span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="inside">
+    <div class="wrap">
+      <p class="problem-line">Most coaches run this out of a notebook, a spreadsheet, and a long text thread — and every client conversation starts with <strong>"remind me where we left off?"</strong> CompassDeck keeps that answer one click away, for you and for them.</p>
+    </div>
+  </section>
+
+  <section>
+    <div class="wrap">
+      <div class="section-head">
+        <div class="eyebrow">What's inside</div>
+        <h2>Everything a career coaching practice runs on, in one system.</h2>
+      </div>
+      <div class="features">
+        <div class="feature">
+          <span class="tag">Coach side</span>
+          <h3>Client CRM</h3>
+          <p>Every client, their package, status, payment, and next session in one dashboard — with at-risk and overdue flags surfaced automatically.</p>
+        </div>
+        <div class="feature">
+          <span class="tag">Coach side</span>
+          <h3>Career assessment</h3>
+          <p>Structured mapping for top 5 values, leadership strengths, and a 7-skill current-vs-target matrix, with a running coach's-notes column.</p>
+        </div>
+        <div class="feature">
+          <span class="tag">Coach side</span>
+          <h3>Session &amp; homework log</h3>
+          <p>Private session notes with a one-toggle "share with client," plus a homework tracker that shows what's overdue across your whole roster.</p>
+        </div>
+        <div class="feature">
+          <span class="tag">Client-facing</span>
+          <h3>Client portal</h3>
+          <p>A page you share directly with each client: their goal, this week's homework, shared session highlights, and resources — no login hoops.</p>
+        </div>
+        <div class="feature">
+          <span class="tag">Client-facing</span>
+          <h3>Progress they can see</h3>
+          <p>Clients check off their own homework and see their assessment progress, so sessions start from "where we are" instead of a recap.</p>
+        </div>
+        <div class="feature">
+          <span class="tag">Setup</span>
+          <h3>Duplicate &amp; go</h3>
+          <p>One template to duplicate per client. No databases to design, no relations to wire up — it's already built and already linked.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <div class="wrap">
+      <div class="section-head">
+        <div class="eyebrow">The assessment</div>
+        <h2>Three questions every career engagement should answer first.</h2>
+      </div>
+      <div class="steps">
+        <div class="step">
+          <div class="step-num">01</div>
+          <div>
+            <h3>What matters to them</h3>
+            <p>Five values, ranked and written in their own language — the filter every offer and option gets checked against for the rest of the engagement.</p>
+          </div>
+        </div>
+        <div class="step">
+          <div class="step-num">02</div>
+          <div>
+            <h3>Where they already lead</h3>
+            <p>Recurring leadership strengths with real evidence attached, so resumes and interview answers are built on proof, not adjectives.</p>
+          </div>
+        </div>
+        <div class="step">
+          <div class="step-num">03</div>
+          <div>
+            <h3>What's next to build</h3>
+            <p>Seven tracked skills, current level against target — so "growth" is a specific, visible number instead of a vibe.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <div class="wrap">
+      <div class="section-head">
+        <div class="eyebrow">Pricing</div>
+        <h2>One template. One payment.</h2>
+      </div>
+      <div class="pricing-card">
+        <div>
+          <div class="price-tag"><span class="amount">$89</span><span class="was">$129</span><span class="muted">founding price, first 25 coaches</span></div>
+          <p class="muted" style="margin:0;max-width:48ch;">Regular price is $129 once the founding batch is gone. You keep the template forever — duplicate it for unlimited clients.</p>
+          <ul class="price-list">
+            <li>Full coach dashboard + 4 linked databases</li>
+            <li>Career assessment: values, strengths, skills mapping</li>
+            <li>Client portal template, ready to duplicate and share</li>
+            <li>Works on Notion's free plan</li>
+          </ul>
+        </div>
+        <a class="btn btn-primary" href="#access" style="justify-self:center;">Get early access</a>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <div class="wrap" style="max-width:760px;">
+      <div class="section-head">
+        <div class="eyebrow">Questions</div>
+        <h2>Before you ask</h2>
+      </div>
+      <details open>
+        <summary>Do I need a paid Notion plan?</summary>
+        <p>No. Everything in CompassDeck runs on Notion's free plan. A paid plan only matters once you're sharing portals with a very large number of guests at once.</p>
+      </details>
+      <details>
+        <summary>Can my clients see my notes on other clients?</summary>
+        <p>No. The client portal is a separate page you duplicate and share per client — it never links back into your CRM or any other client's data.</p>
+      </details>
+      <details>
+        <summary>What if I coach outside career/leadership specifically?</summary>
+        <p>The structure — CRM, sessions, homework, portal — works for any 1:1 coaching practice. The values/strengths/skills assessment is written for career coaching, but every field is plain text you can relabel in minutes.</p>
+      </details>
+      <details>
+        <summary>Is this a subscription?</summary>
+        <p>No. It's a one-time template purchase. You duplicate it for every client you take on, with no per-seat or per-client cost.</p>
+      </details>
+    </div>
+  </section>
+
+  <section id="access">
+    <div class="wrap">
+      <div class="waitlist">
+        <div>
+          <h2>Get on the founding list</h2>
+          <p class="muted" style="margin:0 0 4px;">Email me directly and I'll send you the template link the day it opens — founding price is only good for the first 25 coaches.</p>
+          <div class="email-row">
+            <span class="email-box" id="contact-email">hello@compassdeck.com</span>
+            <button class="copy-btn" id="copy-email-btn" type="button">Copy email</button>
+            <a class="btn btn-ghost" id="mailto-link" href="mailto:hello@compassdeck.com?subject=CompassDeck%20early%20access">Open email app</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer>
+  <div class="wrap">
+    <span>CompassDeck — a Notion system for career coaches</span>
+    <span>Built for coaches who'd rather coach than build spreadsheets.</span>
+  </div>
+</footer>
+
+<script>
+  (function(){
+    var btn = document.getElementById('copy-email-btn');
+    var emailEl = document.getElementById('contact-email');
+    if(!btn || !emailEl) return;
+    btn.addEventListener('click', function(){
+      var text = emailEl.textContent.trim();
+      function fallbackSelect(){
+        var range = document.createRange();
+        range.selectNodeContents(emailEl);
+        var sel = window.getSelection();
+        sel.removeAllRanges();
+        sel.addRange(range);
+      }
+      function markCopied(){
+        btn.dataset.copied = "true";
+        var original = btn.textContent;
+        btn.textContent = "Copied";
+        setTimeout(function(){ btn.textContent = original; btn.dataset.copied = "false"; }, 1800);
+      }
+      if(navigator.clipboard && navigator.clipboard.writeText){
+        navigator.clipboard.writeText(text).then(markCopied, function(){
+          fallbackSelect();
+        });
+      } else {
+        fallbackSelect();
+      }
+    });
+  })();
+</script>
